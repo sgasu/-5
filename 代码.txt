@@ -1,0 +1,66 @@
+import processing.dxf.*;
+
+boolean recordDXF = false;
+
+int segments = 6; 
+float vaseHeight = 200; 
+float topRadius = 50; 
+float bottomRadius = 100; 
+float rotateX = 0;
+float rotateY = 0;
+float rotateZ = 0;
+
+void setup() {
+  size(800, 600, P3D);
+}
+
+void draw() {
+  if (recordDXF) {
+    beginRaw(DXF, "vase.dxf"); 
+  }
+
+  background(255);
+  translate(width / 2, height / 2);
+  rotateX(rotateX);
+  rotateY(rotateY);
+  rotateZ(rotateZ);
+  drawVase();
+
+  if (recordDXF) {
+    endRaw(); // 结束记录DXF文件
+    recordDXF = false; // 重置记录标志
+    println("DXF file saved.");
+  }
+}
+
+void drawVase() {
+  beginShape(TRIANGLE_STRIP);
+  for (int i = 0; i <= segments; i++) {
+    float angle = TWO_PI / segments * i;
+    float xTop = topRadius * cos(angle);
+    float yTop = topRadius * sin(angle);
+    float xBottom = bottomRadius * cos(angle);
+    float yBottom = bottomRadius * sin(angle);
+    vertex(xTop, -vaseHeight / 2, yTop);
+    vertex(xBottom, vaseHeight / 2, yBottom);
+  }
+  endShape(CLOSE);
+}
+
+void keyPressed() {
+  if (key == 'q') rotateX += 0.1;
+  if (key == 'w') rotateX -= 0.1;
+  if (key == 'a') rotateY += 0.1;
+  if (key == 's') rotateY -= 0.1;
+  if (key == 'z') rotateZ += 0.1;
+  if (key == 'x') rotateZ -= 0.1;
+  if (key == '+') vaseHeight += 10;
+  if (key == '-') vaseHeight -= 10;
+  if (key == 'd') topRadius += 5;
+  if (key == 'f') topRadius -= 5;
+  if (key == 'g') bottomRadius += 5;
+  if (key == 'h') bottomRadius -= 5;
+  if (key == 'r') segments++;
+  if (key == 't') if (segments > 3) segments--;
+  if (key == 'e') recordDXF = true; 
+}
